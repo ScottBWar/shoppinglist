@@ -17,9 +17,9 @@ Storage.prototype.add = function(name) {
     return item;
 };
 
-Storage.prototype.delete = function(id) {
-    // return this.items.splice(id,1);
-};
+// Storage.prototype.delete = function(id) {
+//     // return this.items.splice(id,1);
+// };
 
 var storage = new Storage();
 storage.add('Broad beans');
@@ -44,8 +44,8 @@ app.post('/items', jsonParser, function(req, res) {
 });
 
 app.delete('/items/:id', jsonParser, function(req, res) {
-	console.log(storage.items);
-    if (Number.isInteger(req.params.id)) {
+	console.log(Number.isInteger(req.params.id));
+    if (isNaN(req.params.id)) {
         return res.sendStatus(400);
     }
     for (var i = 0; i < storage.items.length; i++) {
@@ -54,6 +54,18 @@ app.delete('/items/:id', jsonParser, function(req, res) {
             return storage.items.splice(i, 1);
         }
     }
+});
+
+app.put('/items/:id', jsonParser, function(req, res){
+	 if (isNaN(req.params.id)) {
+        return res.sendStatus(400);
+    }	
+   if (req.params.id  > storage.length -1){
+   	  var item = storage.add(req.body.name);
+    	res.status(201).json(item);
+   }
+	storage.items[req.params.id].name = req.body.name;
+	res.status(201).json(storage.items[req.params.id]);
 });
 
 
